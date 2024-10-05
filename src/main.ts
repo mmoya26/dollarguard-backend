@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: 'http://localhost:4200',  // Allow only Angular app to access
+    origin: [process.env.BACKEND_URL_PROD, 'http://localhost:4200'],  // Might need to change backend prod url from https to http
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     preflightContinue: false
