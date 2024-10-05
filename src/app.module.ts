@@ -5,6 +5,6 @@ import { AuthModule } from './auth/auth.module';
 
 
 @Module({
-  imports: [ExpenseModule, AuthModule],
+  imports: [],
 })
 export class AppModule {}
