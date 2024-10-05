@@ -5,6 +5,6 @@ import { AuthModule } from './auth/auth.module';
 
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb://localhost/dollarguard'), ExpenseModule, AuthModule],
+  imports: [ExpenseModule, AuthModule],
 })
 export class AppModule {}
