@@ -5,6 +5,7 @@ import { UserDto } from 'src/users/dto/user.dto';
 import * as bcrypt from 'bcrypt';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
 import { Response } from 'express';
+import { UserLoginDto } from './dto/user-login.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +13,23 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private userService: UsersService
-  ) {}
+  ) { }
+
+  async validateUser({ username, password }: UserLoginDto) {
+    const user = await this.usersService.findUserByEmail(username);
+
+    // if (!user) throw new UnauthorizedException();
+    if (!user) return null;
+
+    const isPasswordAMatch = await bcrypt.compare(password, user.password);
+
+    // Might need to change this?
+    if (!isPasswordAMatch) throw new UnauthorizedException();
+
+    const payload: UserJWTPayload = { id: user.id, email: user.email, name: user.name };
+
+    return await this.jwtService.signAsync(payload);
+  }
 
   async login(email: string, password: string): Promise<{ access_token: string }> {
     const user = await this.usersService.findUserByEmail(email);
@@ -23,7 +40,7 @@ export class AuthService {
 
     if (!isPasswordAMatch) throw new UnauthorizedException();
 
-    const payload: UserJWTPayload = { id: user.id, email: user.email, name: user.name};
+    const payload: UserJWTPayload = { id: user.id, email: user.email, name: user.name };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -31,9 +48,9 @@ export class AuthService {
   }
 
   async signUp(user: UserDto) {
-    const {id, email, name} = await this.userService.createUser(user);
+    const { id, email, name } = await this.userService.createUser(user);
 
-    const payload: UserJWTPayload = { id, email, name};
+    const payload: UserJWTPayload = { id, email, name };
 
     return {
       access_token: await this.jwtService.signAsync(payload)
@@ -47,7 +64,7 @@ export class AuthService {
 
     res.cookie('auth_token', access_token ? access_token : '', {
       httpOnly: true,
-      secure: isProduction, 
+      secure: isProduction,
       sameSite: 'none'
     });
   }

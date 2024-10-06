@@ -1,10 +1,12 @@
 
-import {Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDto } from 'src/users/dto/user.dto';
 import { UserLoginDto } from './dto/user-login.dto';
-import { Response } from 'express';
-import { AuthGuard } from './auth.guard';
+import { Request, Response } from 'express';
+import { AuthGuard as MyAuthGuard } from './auth.guard';
+import { LocalGuard } from './guards/local.guard';
+import { JwtAuthGuard } from './guards/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -12,12 +14,9 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Body() userLoginDto: UserLoginDto, @Res({ passthrough: true }) response: Response) {
-    const { access_token } = await this.authService.login(userLoginDto.email, userLoginDto.password);
-
-    this.authService.setAuthCookiesConfigurations(response, access_token);
-
-    return { message: "Login Sucessfully" }
+  @UseGuards(LocalGuard)
+  async login(@Req() req: Request) {
+    return req.user
   }
 
   @HttpCode(HttpStatus.CREATED)
@@ -40,7 +39,7 @@ export class AuthController {
 
 
   @Get('validate')
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   validateUser() {
     return {isAuthenticated: true}
   }
