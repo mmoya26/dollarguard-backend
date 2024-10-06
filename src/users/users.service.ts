@@ -25,8 +25,6 @@ export class UsersService {
       password: hashedPassword
     });
 
-    console.log(newUser);
-
     return await newUser.save()
   }
 

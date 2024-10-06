@@ -31,22 +31,6 @@ export class AuthService {
     return await this.jwtService.signAsync(payload);
   }
 
-  async login(email: string, password: string): Promise<{ access_token: string }> {
-    const user = await this.usersService.findUserByEmail(email);
-
-    if (!user) throw new UnauthorizedException();
-
-    const isPasswordAMatch = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordAMatch) throw new UnauthorizedException();
-
-    const payload: UserJWTPayload = { id: user.id, email: user.email, name: user.name };
-
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
-  }
-
   async signUp(user: UserDto) {
     const { id, email, name } = await this.userService.createUser(user);
 
@@ -60,12 +44,12 @@ export class AuthService {
   setAuthCookiesConfigurations(res: Response, access_token?: string) {
     const isProduction = process.env.NODE_ENV === 'production';
 
-    console.log(isProduction);
-
     res.cookie('auth_token', access_token ? access_token : '', {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'none'
+      sameSite: 'none',
+      path: '/',
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days in milliseconds
     });
   }
 }

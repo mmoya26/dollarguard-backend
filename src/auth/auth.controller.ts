@@ -2,9 +2,7 @@
 import {Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDto } from 'src/users/dto/user.dto';
-import { UserLoginDto } from './dto/user-login.dto';
 import { Request, Response } from 'express';
-import { AuthGuard as MyAuthGuard } from './auth.guard';
 import { LocalGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
 
@@ -15,8 +13,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @UseGuards(LocalGuard)
-  async login(@Req() req: Request) {
-    return req.user
+  async login(@Req() req: Request, @Res() res: Response) {
+    this.authService.setAuthCookiesConfigurations(res, req.user as string);
+
+    return res.send({
+      message: 'Login successful',
+      auth_token: req.user
+    });
   }
 
   @HttpCode(HttpStatus.CREATED)
@@ -26,7 +29,7 @@ export class AuthController {
 
     this.authService.setAuthCookiesConfigurations(response, access_token);
 
-    return { message: "Signed up sucessfully" }
+    return { message: "Signed up sucessfully", access_token }
   }
 
   @HttpCode(HttpStatus.OK)

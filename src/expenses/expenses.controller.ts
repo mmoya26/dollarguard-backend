@@ -7,9 +7,10 @@ import { isValidDate, isValidMonth } from './helpers/dateFunctions';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { User } from 'src/decorators/user.decorator';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('expenses')
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard)
 export class ExpensesController {
   constructor(private readonly expensesService: ExpensesService) {}
 
