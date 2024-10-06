@@ -49,7 +49,8 @@ export class AuthService {
       httpOnly: true,
       secure: true, 
       sameSite: isProduction,
-      domain: 'dollarguard-backend-production.up.railway.app'
+      domain: 'dollarguard-backend-production.up.railway.app',
+      path: '/'
     });
   }
 }

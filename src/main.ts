@@ -8,7 +8,8 @@ async function bootstrap() {
 
   app.enableCors({
     origin: ['https://dollarguard.pages.dev', 'http://localhost:4200'],  // Might need to change backend prod url from https to http
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
     preflightContinue: false
   });
