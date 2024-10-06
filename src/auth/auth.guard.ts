@@ -8,15 +8,15 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
 
-    const token = request.cookies['auth_token'];
+    const {auth_token} = parseCookies(request.headers.cookie);
 
-    if (!token) {
+    if (!auth_token) {
       throw new UnauthorizedException();
     }
 
     try {
       const payload = await this.jwtService.verifyAsync(
-        token,
+        auth_token,
         {
           secret: process.env.JWTSECRET
         }
@@ -31,4 +31,17 @@ export class AuthGuard implements CanActivate {
   }
 
   constructor(private jwtService: JwtService) { }
+}
+
+// Helper function to parse the cookie string
+function parseCookies(cookieHeader: string): { [key: string]: string } {
+  const cookies: { [key: string]: string } = {};
+  
+  cookieHeader.split(';').forEach(cookie => {
+    const [name, ...rest] = cookie.trim().split('=');
+    const value = rest.join('=');
+    cookies[name] = value;
+  });
+
+  return cookies;
 }
