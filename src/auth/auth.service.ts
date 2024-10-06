@@ -48,9 +48,7 @@ export class AuthService {
     res.cookie('auth_token', access_token ? access_token : '', {
       httpOnly: true,
       secure: isProduction, 
-      sameSite: 'none',
-      domain: 'dollarguard-backend-production.up.railway.app',
-      path: '/'
+      sameSite: 'none'
     });
   }
 }
