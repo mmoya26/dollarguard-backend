@@ -42,13 +42,14 @@ export class AuthService {
 
   setAuthCookiesConfigurations(res: Response, access_token?: string) {
     const isProduction = process.env.NODE_ENV === 'production';
-    
+
     console.log(isProduction);
 
     res.cookie('auth_token', access_token ? access_token : '', {
       httpOnly: true,
       secure: true, 
       sameSite: isProduction,
+      domain: 'dollarguard-backend-production.up.railway.app'
     });
   }
 }
