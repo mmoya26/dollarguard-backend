@@ -7,3 +7,4 @@
 
 # Things to do
 - Remove .dotenv package
+- Update coookies configurations
