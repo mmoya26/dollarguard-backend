@@ -6,5 +6,8 @@
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
 # Things to do
-- Remove .dotenv package
-- Update coookies configurations
+- Research cookie warning message (Cookie will soon be rejected because it is foreign and does not have the “Partitioned“ attribute.)
+- Look into moving validations of params to their on validator constraint
+- Use NestJS HttpExceptions enums instead of using hard coded status codes
+- Move validation from NestJS controller to services instead
+- Update auth.guard.ts in server to check if the token has not expired because we are only checking if the token is present or not
