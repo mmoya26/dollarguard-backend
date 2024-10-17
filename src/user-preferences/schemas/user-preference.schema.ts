@@ -2,7 +2,7 @@ import { Category } from '@interfaces/category';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-export type ExpenseDocument = HydratedDocument<UserPreference>;
+export type UserPreferenceDocument = HydratedDocument<UserPreference>;
 
 @Schema({
     toJSON: {
@@ -13,13 +13,14 @@ export type ExpenseDocument = HydratedDocument<UserPreference>;
             return ret;
         },
     },
+    versionKey: false
 })
 export class UserPreference {
-    @Prop({required: true})
+    @Prop({required: true, unique: true})
     userId: string;
 
-    @Prop({ type: Object, required: true})
+    @Prop({type: [Object], required: true})
     categories: Category[]
 }
 
-export const ExpenseSchema = SchemaFactory.createForClass(UserPreference);
+export const UserPreferenceSchema = SchemaFactory.createForClass(UserPreference);

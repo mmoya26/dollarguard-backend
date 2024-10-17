@@ -25,6 +25,8 @@ export class UsersService {
       password: hashedPassword
     });
 
+    console.log('User ID created: ' + newUser.id);
+
     return await newUser.save()
   }
 

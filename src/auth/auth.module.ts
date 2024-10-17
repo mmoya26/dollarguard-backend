@@ -6,10 +6,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { UserPreferencesModule } from 'src/user-preferences/user-preferences.module';
 
 @Module({
   imports: [
     UsersModule,
+    UserPreferencesModule,
     JwtModule.registerAsync({
       global: true,
       useFactory: () => ({
@@ -17,10 +19,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         signOptions: { expiresIn: '1d' }
       })
     }),
-    PassportModule
+    PassportModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService, ]
+  exports: [AuthService]
 })
 export class AuthModule { }

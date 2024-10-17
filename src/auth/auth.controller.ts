@@ -5,10 +5,11 @@ import { UserDto } from 'src/users/dto/user.dto';
 import { Request, Response } from 'express';
 import { LocalGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { UserPreferencesService } from 'src/user-preferences/user-preferences.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private userPreferenceService: UserPreferencesService) { }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -25,7 +26,12 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @Post('signup')
   async signUp(@Body() user: UserDto, @Res({ passthrough: true }) response: Response) {
-    const { access_token } = await this.authService.signUp(user);
+
+    // Create new user to MongoDB
+    const { access_token, userId } = await this.authService.signUp(user);
+    
+    // Create user preferenfes for the new user
+    await this.userPreferenceService.createDefaultUserPreferences(userId)
 
     this.authService.setAuthCookiesConfigurations(response, access_token);
 
