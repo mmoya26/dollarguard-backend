@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UpdateUserPreferencesDto } from './dto/update-user-preferences.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserPreferences } from './schemas/user-preferences.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Category } from '@interfaces/category';
 
 export const defaultCategories: Category[] = [
@@ -31,6 +31,9 @@ export class UserPreferencesService {
     return await newUserPreference.save();
   }
 
+  async deletePreferenceCategory(preferenceId: string, categoryId: string) {
+    return await this.userPreferenceModel.findOneAndUpdate({_id: new Types.ObjectId(preferenceId)}, {$pull: {categories: {_id: categoryId}}}, {new: true}).exec();
+  }
   findAll() {
     return `This action returns all userPreferences`;
   }

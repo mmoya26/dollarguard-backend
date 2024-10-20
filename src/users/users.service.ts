@@ -5,15 +5,14 @@ import { User } from './schemas/users.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
-import { UserPreferences } from 'src/user-preferences/schemas/user-preferences.schema';
 import { UserPreferencesService } from 'src/user-preferences/user-preferences.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>, 
-    @InjectModel(UserPreferences.name) private userPreferencesModel: Model<UserPreferences>,
-    private userPreferencesService: UserPreferencesService) {}
+    private userPreferencesService: UserPreferencesService
+  ) {}
 
   async createUser(user: UserDto) {
     const existingUser = await this.userModel.findOne({lowerCaseEmail: user.email.toLowerCase()});
@@ -39,7 +38,7 @@ export class UsersService {
   }
 
   async findUserById(id: string) {
-    return this.userModel.findById(id);
+    return this.userModel.findById(id).populate('preferences');
   }
 
   async findUserByEmail(email: string) {

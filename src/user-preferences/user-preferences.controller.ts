@@ -1,28 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
 import { UserPreferencesService } from './user-preferences.service';
-import { UpdateUserPreferencesDto } from './dto/update-user-preferences.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import mongoose from 'mongoose';
 
 @Controller('user-preferences')
+@UseGuards(JwtAuthGuard)
 export class UserPreferencesController {
   constructor(private readonly userPreferencesService: UserPreferencesService) {}
 
-  @Get()
-  findAll() {
-    return this.userPreferencesService.findAll();
-  }
+  @Delete(':preferenceId/:categoryId')
+  async deleteUserCategory(@Param('preferenceId') preferenceId: string, @Param('categoryId') categoryId: string) {
+    const isPreferenceIdValid = mongoose.Types.ObjectId.isValid(preferenceId);
+    const isCategoryIdValid = mongoose.Types.ObjectId.isValid(categoryId);
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userPreferencesService.findOne(+id);
-  }
+    if (!isPreferenceIdValid) throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    if (!isCategoryIdValid) throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserPreferenceDto: UpdateUserPreferencesDto) {
-    return this.userPreferencesService.update(+id, updateUserPreferenceDto);
-  }
+    const updatedPreferences = await this.userPreferencesService.deletePreferenceCategory(preferenceId, categoryId);
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userPreferencesService.remove(+id);
+    return updatedPreferences;
   }
 }
