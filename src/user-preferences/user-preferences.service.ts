@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateUserPreferenceDto } from './dto/update-user-preference.dto';
+import { UpdateUserPreferencesDto } from './dto/update-user-preferences.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserPreference } from './schemas/user-preference.schema';
+import { UserPreferences } from './schemas/user-preferences.schema';
 import { Model } from 'mongoose';
 import { Category } from '@interfaces/category';
 
-const defaultCategories: Category[] = [
+export const defaultCategories: Category[] = [
   { name: "Groceries", hexColor: "#4CAF50" },
   { name: "Gas", hexColor: "#FF9800" },
   { name: "Rent", hexColor: "#3F51B5" },
@@ -20,14 +20,11 @@ const defaultCategories: Category[] = [
 
 @Injectable()
 export class UserPreferencesService {
-  constructor(@InjectModel(UserPreference.name) private readonly userPreferenceModel: Model<UserPreference>) {}
+  constructor(@InjectModel(UserPreferences.name) private readonly userPreferenceModel: Model<UserPreferences>) {}
 
-  async createDefaultUserPreferences(userId: string) {
-
-    console.log('Creating user preferences with ID: ' + userId);
+  async createDefaultUserPreferences() {
     
     const newUserPreference = await this.userPreferenceModel.create({
-      userId,
       categories: defaultCategories
     });
 
@@ -42,7 +39,7 @@ export class UserPreferencesService {
     return `This action returns a #${id} userPreference`;
   }
 
-  update(id: number, updateUserPreferenceDto: UpdateUserPreferenceDto) {
+  update(id: number, updateUserPreferenceDto: UpdateUserPreferencesDto) {
     return `This action updates a #${id} userPreference`;
   }
 

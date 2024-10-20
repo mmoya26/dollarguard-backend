@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { UserPreferencesService } from './user-preferences.service';
-import { UpdateUserPreferenceDto } from './dto/update-user-preference.dto';
+import { UpdateUserPreferencesDto } from './dto/update-user-preferences.dto';
 
 @Controller('user-preferences')
 export class UserPreferencesController {
@@ -17,7 +17,7 @@ export class UserPreferencesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserPreferenceDto: UpdateUserPreferenceDto) {
+  update(@Param('id') id: string, @Body() updateUserPreferenceDto: UpdateUserPreferencesDto) {
     return this.userPreferencesService.update(+id, updateUserPreferenceDto);
   }
 

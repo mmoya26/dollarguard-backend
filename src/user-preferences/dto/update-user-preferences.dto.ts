@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, MaxLength } from "class-validator"
 
-export class UpdateUserPreferenceDto {
+export class UpdateUserPreferencesDto {
     @IsString()
     @IsNotEmpty()
     userId: string;

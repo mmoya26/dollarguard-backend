@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { UserPreferences } from 'src/user-preferences/schemas/user-preferences.schema';
 
 export type UserDocumenbt = HydratedDocument<User>;
 
@@ -29,6 +30,9 @@ export class User {
 
     @Prop({required: true})
     creationDate: Date;
+
+    @Prop({required: true, type: mongoose.Schema.Types.ObjectId, ref: 'UserPreferences'})
+    preferences: UserPreferences
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

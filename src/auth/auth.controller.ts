@@ -30,8 +30,6 @@ export class AuthController {
     // Create new user to MongoDB
     const { access_token, userId } = await this.authService.signUp(user);
     
-    // Create user preferenfes for the new user
-    await this.userPreferenceService.createDefaultUserPreferences(userId)
 
     this.authService.setAuthCookiesConfigurations(response, access_token);
 
