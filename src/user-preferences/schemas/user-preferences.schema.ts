@@ -6,6 +6,9 @@ export type UserPreferencesDocument = HydratedDocument<UserPreferences>;
 
 @Schema({ versionKey: false })
 export class UserPreferences {
+    @Prop({unique: true, required: true})
+    userId: string
+
     @Prop({ type: [{ name: String, hexColor: String }], required: true })
     categories: Category[]
 }

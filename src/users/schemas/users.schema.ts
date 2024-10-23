@@ -30,9 +30,6 @@ export class User {
 
     @Prop({required: true})
     creationDate: Date;
-
-    @Prop({required: true, type: mongoose.Schema.Types.ObjectId, ref: 'UserPreferences'})
-    preferences: UserPreferences
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

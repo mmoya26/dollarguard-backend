@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UpdateUserPreferencesDto } from './dto/update-user-preferences.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserPreferences } from './schemas/user-preferences.schema';
 import { Model, Types } from 'mongoose';
 import { Category } from '@interfaces/category';
+import { UserJWTPayload } from '@interfaces/UserJWTPayload';
 
 export const defaultCategories: Category[] = [
   { name: "Groceries", hexColor: "#4CAF50" },
@@ -20,20 +21,33 @@ export const defaultCategories: Category[] = [
 
 @Injectable()
 export class UserPreferencesService {
-  constructor(@InjectModel(UserPreferences.name) private readonly userPreferenceModel: Model<UserPreferences>) {}
+  constructor(@InjectModel(UserPreferences.name) private readonly userPreferencesModel: Model<UserPreferences>) {}
 
-  async createDefaultUserPreferences() {
+  async createDefaultUserPreferences(userId: string) {
     
-    const newUserPreference = await this.userPreferenceModel.create({
+    const newUserPreference = await this.userPreferencesModel.create({
+      userId,
       categories: defaultCategories
     });
 
     return await newUserPreference.save();
   }
 
-  async deletePreferenceCategory(preferenceId: string, categoryId: string) {
-    return await this.userPreferenceModel.findOneAndUpdate({_id: new Types.ObjectId(preferenceId)}, {$pull: {categories: {_id: categoryId}}}, {new: true}).exec();
+  async deleteCategory(user: UserJWTPayload, categoryId: string) {
+
+    const category = await this.userPreferencesModel.findOne(
+      { userId: user.id, 'categories._id': categoryId }, // Find by userId and the category._id
+      { 'categories.$': 1 } // Project only the matched category
+    );
+
+    if (!category) throw new HttpException('Category not found', HttpStatus.NOT_FOUND)
+
+    return this.userPreferencesModel.updateOne(
+      { userId: user.id }, 
+      { $pull: { categories: { _id: categoryId } } }
+    ).exec();
   }
+
   findAll() {
     return `This action returns all userPreferences`;
   }

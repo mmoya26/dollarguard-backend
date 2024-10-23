@@ -9,7 +9,7 @@ import { UserPreferencesService } from 'src/user-preferences/user-preferences.se
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService, private userPreferenceService: UserPreferencesService) { }
+  constructor(private authService: AuthService, private userPreferencesService: UserPreferencesService) { }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -30,6 +30,7 @@ export class AuthController {
     // Create new user to MongoDB
     const { access_token, userId } = await this.authService.signUp(user);
     
+    await this.userPreferencesService.createDefaultUserPreferences(userId);
 
     this.authService.setAuthCookiesConfigurations(response, access_token);
 
