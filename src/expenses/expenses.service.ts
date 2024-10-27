@@ -15,9 +15,6 @@ export class ExpensesService {
     const newExpense = new this.expenseModel({...createExpenseDto, userId: user.id});
     newExpense.date = new Date(`${month}/${createExpenseDto.monthDay}/${year}`);
 
-
-    console.log(`New expense created date: ${newExpense.date}`);
-
     return await newExpense.save();
   }
 
@@ -45,8 +42,6 @@ export class ExpensesService {
     
     const currentExpenseYear = foundRecord.date.getFullYear();
     const currentExpenseMonth = foundRecord.date.getMonth() + 1; // Add + 1 because the return value will based on index 0
-    
-    console.log(`current expense month update: ${currentExpenseMonth}`);
 
     // Subtract 1 from currentExpenseMonth to check if it is a valid date because the function is based on index 0
     // so march for example will actually be index 2 instead of 3.
@@ -55,8 +50,6 @@ export class ExpensesService {
     }
 
     const newUpdatedExpenseDate = new Date(`${currentExpenseYear}/${currentExpenseMonth}/${expenseDto.monthDay}`);
-
-    console.log(`Expense updated date: ${newUpdatedExpenseDate}`);
 
     return this.expenseModel.findOneAndUpdate({userId: user.id, _id: new Types.ObjectId(updateExpenseParams.id)}, { ...expenseDto, date: newUpdatedExpenseDate, userId: user.id}, {new: true});
   }
