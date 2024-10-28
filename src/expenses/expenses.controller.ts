@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Delete, HttpException, Patch, HttpStatus, UseGuards } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { ExpenseDto } from './dto/expense.dto';
-import { ExpenseParams, UpdateExpenseParams } from '../interfaces/expenseParams';
+import { ExpenseParams } from '../interfaces/expenseParams';
 import mongoose from 'mongoose';
 import { isValidDate, isValidMonth } from './helpers/dateFunctions';
 import { User } from 'src/decorators/user.decorator';
@@ -41,11 +41,11 @@ export class ExpensesController {
   }
 
   @Patch(':id')
-  async updateExpense(@Param() updateExpenseParams: UpdateExpenseParams, @Body() updateExpenseDto: ExpenseDto, @User() user: UserJWTPayload) {
-    const isValidId = mongoose.Types.ObjectId.isValid(updateExpenseParams.id);
+  async updateExpense(@Param('id') expenseId, @Body() updateExpenseDto: ExpenseDto, @User() user: UserJWTPayload) {
+    const isValidId = mongoose.Types.ObjectId.isValid(expenseId);
     if (!isValidId) throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
 
-    const updatedExpense =  await this.expensesService.updateExpense(updateExpenseParams, updateExpenseDto, user);
+    const updatedExpense =  await this.expensesService.updateExpense(expenseId, updateExpenseDto, user);
     if (!updatedExpense) throw new HttpException('Unable to update expense', HttpStatus.BAD_REQUEST);
 
     return updatedExpense;

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ExpenseDto } from './dto/expense.dto';
 import { Expense } from "./schemas/expense.schema";
-import { ExpenseParams, UpdateExpenseParams } from '../interfaces/expenseParams';
+import { ExpenseParams } from '../interfaces/expenseParams';
 import { isValidDate } from './helpers/dateFunctions';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
 
@@ -35,8 +35,8 @@ export class ExpensesService {
     });
   }
 
-  async updateExpense(updateExpenseParams: UpdateExpenseParams, expenseDto: ExpenseDto, user: UserJWTPayload) {
-    const foundRecord = await this.expenseModel.findById(updateExpenseParams.id);
+  async updateExpense(expenseId: string, expenseDto: ExpenseDto, user: UserJWTPayload) {
+    const foundRecord = await this.expenseModel.findById(expenseId);
     
     if (!foundRecord) return null
     
@@ -51,7 +51,7 @@ export class ExpensesService {
 
     const newUpdatedExpenseDate = new Date(`${currentExpenseYear}/${currentExpenseMonth}/${expenseDto.monthDay}`);
 
-    return this.expenseModel.findOneAndUpdate({userId: user.id, _id: new Types.ObjectId(updateExpenseParams.id)}, { ...expenseDto, date: newUpdatedExpenseDate, userId: user.id}, {new: true});
+    return this.expenseModel.findOneAndUpdate({userId: user.id, _id: new Types.ObjectId(expenseId)}, { ...expenseDto, date: newUpdatedExpenseDate, userId: user.id}, {new: true});
   }
 
   async deleteExpense(id: string, user: UserJWTPayload) {
