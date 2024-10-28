@@ -12,3 +12,4 @@
 - Move validation from NestJS controller to services instead
 - Update auth.guard.ts in server to check if the token has not expired because we are only checking if the token is present or not
 - Possibly add verification when deleting a category from user preferences to see if the passed ids actually exists (currently it just doesn't do anything returns the collection)
+- Remove unused params for updating an expense (it looks like we only need the expense id)
