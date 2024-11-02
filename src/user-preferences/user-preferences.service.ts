@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { AddCategoryDto, UpdateUserPreferencesDto } from './dto/update-user-preferences.dto';
+import { AddCategoryDto } from './dto/user-preferences-categories-dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserPreferences } from './schemas/user-preferences.schema';
 import { Model, Types } from 'mongoose';
@@ -56,5 +56,14 @@ export class UserPreferencesService {
     preferences.categories.push({...category});
 
     return preferences.save();
+  }
+
+
+  async getUserCategories(user: UserJWTPayload) {
+    const preferences = await this.userPreferencesModel.findOne({userId: user.id});
+
+    if (!preferences) return new HttpException("User preferences - categories: not found", HttpStatus.NOT_FOUND);
+    
+    return preferences;
   }
 }
