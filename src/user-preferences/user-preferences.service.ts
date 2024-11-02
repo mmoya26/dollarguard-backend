@@ -64,6 +64,6 @@ export class UserPreferencesService {
 
     if (!preferences) return new HttpException("User preferences - categories: not found", HttpStatus.NOT_FOUND);
     
-    return preferences;
+    return preferences.categories;
   }
 }
