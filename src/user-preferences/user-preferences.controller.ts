@@ -4,6 +4,8 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import mongoose from 'mongoose';
 import { User } from 'src/decorators/user.decorator';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
+import { Category } from '@interfaces/category';
+import { AddCategoryDto } from './dto/update-user-preferences.dto';
 
 @Controller('user-preferences')
 @UseGuards(JwtAuthGuard)
@@ -19,5 +21,11 @@ export class UserPreferencesController {
     const updatedPreferences = await this.userPreferencesService.deleteCategory(user, categoryId);
 
     return updatedPreferences;
+  }
+
+  @Post('categories')
+  async addUserCategory(@Body() category: AddCategoryDto, @User() user: UserJWTPayload) {
+    const categories = await this.userPreferencesService.addNewCategory(category, user);
+    return categories;
   }
 }

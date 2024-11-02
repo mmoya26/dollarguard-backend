@@ -15,3 +15,14 @@ export class UpdateUserPreferencesDto {
     @MaxLength(8, {message: 'Hex color should be 8 characters or less'})
     hexColor: string
 }
+
+
+export class AddCategoryDto {
+    @IsString()
+    @IsNotEmpty()
+    name: string
+
+    @IsString()
+    @IsNotEmpty()
+    hexColor: string
+}
