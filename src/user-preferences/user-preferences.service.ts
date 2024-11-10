@@ -16,15 +16,15 @@ export const defaultCategories: Category[] = [
   { name: "Transportation", hexColor: "#009688" },
   { name: "Healthcare", hexColor: "#F44336" },
   { name: "Savings", hexColor: "#2196F3" },
-  { name: "Personal Care", hexColor: "#8BC34A"}
+  { name: "Personal Care", hexColor: "#8BC34A" }
 ];
 
 @Injectable()
 export class UserPreferencesService {
-  constructor(@InjectModel(UserPreferences.name) private readonly userPreferencesModel: Model<UserPreferences>) {}
+  constructor(@InjectModel(UserPreferences.name) private readonly userPreferencesModel: Model<UserPreferences>) { }
 
   async createDefaultUserPreferences(userId: string) {
-    
+
     const newUserPreference = await this.userPreferencesModel.create({
       userId,
       categories: defaultCategories
@@ -43,27 +43,29 @@ export class UserPreferencesService {
     if (!category) throw new HttpException('Category not found', HttpStatus.NOT_FOUND)
 
     return this.userPreferencesModel.updateOne(
-      { userId: user.id }, 
+      { userId: user.id },
       { $pull: { categories: { _id: categoryId } } }
     ).exec();
   }
 
   async addNewCategory(category: AddCategoryDto, user: UserJWTPayload) {
-    const preferences = await this.userPreferencesModel.findOne({userId: user.id});
+    const preferences = await this.userPreferencesModel.findOne({ userId: user.id });
 
     if (!preferences) return new HttpException("User preferences - categories: not found", HttpStatus.NOT_FOUND);
 
-    preferences.categories.push({...category});
+    preferences.categories.push({ ...category });
+    
+    const { categories } = await preferences.save();
 
-    return preferences.save();
+    return categories;
   }
 
 
   async getUserCategories(user: UserJWTPayload) {
-    const preferences = await this.userPreferencesModel.findOne({userId: user.id});
+    const preferences = await this.userPreferencesModel.findOne({ userId: user.id });
 
     if (!preferences) return new HttpException("User preferences - categories: not found", HttpStatus.NOT_FOUND);
-    
+
     return preferences.categories;
   }
 }
