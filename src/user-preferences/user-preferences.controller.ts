@@ -9,7 +9,7 @@ import { AddCategoryDto } from './dto/user-preferences-categories-dto';
 @Controller('user-preferences')
 @UseGuards(JwtAuthGuard)
 export class UserPreferencesController {
-  constructor(private readonly userPreferencesService: UserPreferencesService) {}
+  constructor(private readonly userPreferencesService: UserPreferencesService) { }
 
   @Delete('categories/:categoryId')
   async deleteUserCategory(@Param('categoryId') categoryId: string, @User() user: UserJWTPayload) {

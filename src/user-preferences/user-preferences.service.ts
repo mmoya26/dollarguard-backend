@@ -53,13 +53,38 @@ export class UserPreferencesService {
   }
 
   async addNewCategory(category: AddCategoryDto, user: UserJWTPayload) {
-    const preferences = await this.userPreferencesModel.findOne({ userId: user.id });
+    const preferences = await this.userPreferencesModel.findOneAndUpdate(
+      { userId: user.id },
+      { $push: { categories: { ...category } } },
+      {
+        new: true,
+        projection: {
+          categories: {
+            $map: {
+              input: "$categories",
+              as: "cat",
+              in: {
+                id: { $toString: "$$cat._id" },
+                name: "$$cat.name",
+                hexColor: "$$cat.hexColor",
+                _id: "$$REMOVE"
+              }
+            }
+          }
+        }
+      }
+    ).lean();
+
+    if (!preferences) {
+      throw new HttpException(
+        "User preferences - categories: not found",
+        HttpStatus.NOT_FOUND
+      );
+    }
 
     if (!preferences) return new HttpException("User preferences - categories: not found", HttpStatus.NOT_FOUND);
-
-    preferences.categories.push({ ...category });
-
-    return preferences;
+    
+    return preferences.categories;
   }
 
 
