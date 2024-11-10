@@ -17,9 +17,9 @@ export class UserPreferencesController {
 
     if (!isCategoryIdValid) throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
 
-    const updatedPreferences = await this.userPreferencesService.deleteCategory(user, categoryId);
+    const categories = await this.userPreferencesService.deleteCategory(user, categoryId);
 
-    return updatedPreferences;
+    return categories;
   }
 
   @Post('categories')

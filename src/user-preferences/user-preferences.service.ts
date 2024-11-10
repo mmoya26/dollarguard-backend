@@ -40,12 +40,16 @@ export class UserPreferencesService {
       { 'categories.$': 1 } // Project only the matched category
     );
 
-    if (!category) throw new HttpException('Category not found', HttpStatus.NOT_FOUND)
+    if (!category) throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
 
-    return this.userPreferencesModel.updateOne(
+    await this.userPreferencesModel.updateOne(
       { userId: user.id },
       { $pull: { categories: { _id: categoryId } } }
     ).exec();
+
+    const categories = await this.getUserCategories(user);
+
+    return categories
   }
 
   async addNewCategory(category: AddCategoryDto, user: UserJWTPayload) {
@@ -54,18 +58,29 @@ export class UserPreferencesService {
     if (!preferences) return new HttpException("User preferences - categories: not found", HttpStatus.NOT_FOUND);
 
     preferences.categories.push({ ...category });
-    
-    const { categories } = await preferences.save();
 
-    return categories;
+    return preferences;
   }
 
 
   async getUserCategories(user: UserJWTPayload) {
-    const preferences = await this.userPreferencesModel.findOne({ userId: user.id });
+    const preferences = await this.userPreferencesModel.findOne({ userId: user.id }, {
+      categories: {
+        $map: {
+          input: "$categories",
+          as: "cat",
+          in: {
+            id: { $toString: "$$cat._id" },  // Convert ObjectId to string
+            name: "$$cat.name",
+            hexColor: "$$cat.hexColor",
+            _id: "$$REMOVE"  // This explicitly removes the _id field
+          }
+        }
+      }
+    }).lean();
 
     if (!preferences) return new HttpException("User preferences - categories: not found", HttpStatus.NOT_FOUND);
 
-    return preferences.categories;
+    return preferences.categories
   }
 }
