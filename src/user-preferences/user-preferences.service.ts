@@ -45,7 +45,7 @@ export class UserPreferencesService {
 
   async deleteCategory(user: UserJWTPayload, categoryName: string) {
     const category = await this.userPreferencesModel.findOne(
-      { userId: user.id, 'categories.name': categoryName }, // Find by userId and the category._id
+      { userId: user.id, 'categories.name': categoryName },
       { 'categories.$': 1 } // Project only the matched category
     );
 
@@ -73,10 +73,8 @@ export class UserPreferencesService {
               input: "$categories",
               as: "cat",
               in: {
-                id: { $toString: "$$cat._id" },
                 name: "$$cat.name",
                 hexColor: "$$cat.hexColor",
-                _id: "$$REMOVE"
               }
             }
           }
@@ -104,10 +102,8 @@ export class UserPreferencesService {
           input: "$categories",
           as: "cat",
           in: {
-            id: { $toString: "$$cat._id" },  // Convert ObjectId to string
             name: "$$cat.name",
             hexColor: "$$cat.hexColor",
-            _id: "$$REMOVE"  // This explicitly removes the _id field
           }
         }
       }
