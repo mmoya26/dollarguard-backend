@@ -11,14 +11,9 @@ import { AddCategoryDto } from './dto/user-preferences-categories-dto';
 export class UserPreferencesController {
   constructor(private readonly userPreferencesService: UserPreferencesService) { }
 
-  @Delete('categories/:categoryId')
-  async deleteUserCategory(@Param('categoryId') categoryId: string, @User() user: UserJWTPayload) {
-    const isCategoryIdValid = mongoose.Types.ObjectId.isValid(categoryId);
-
-    if (!isCategoryIdValid) throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-
-    const categories = await this.userPreferencesService.deleteCategory(user, categoryId);
-
+  @Delete('categories/:categoryName')
+  async deleteUserCategory(@Param('categoryName') categoryName: string, @User() user: UserJWTPayload) {
+    const categories = await this.userPreferencesService.deleteCategory(user, categoryName);
     return categories;
   }
 

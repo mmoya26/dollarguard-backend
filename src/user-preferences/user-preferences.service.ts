@@ -7,17 +7,27 @@ import { Category } from '@interfaces/category';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
 
 export const defaultCategories: Category[] = [
-  { name: "Groceries", hexColor: "#4CAF50" },
-  { name: "Gas", hexColor: "#FF9800" },
-  { name: "Rent", hexColor: "#3F51B5" },
-  { name: "Utilities", hexColor: "#FFEB3B" },
-  { name: "Dining Out", hexColor: "#E91E63" },
-  { name: "Entertainment", hexColor: "#9C27B0" },
-  { name: "Transportation", hexColor: "#009688" },
-  { name: "Healthcare", hexColor: "#F44336" },
-  { name: "Savings", hexColor: "#2196F3" },
-  { name: "Personal Care", hexColor: "#8BC34A" }
-];
+  {
+    name: "Miscellaneous",
+    hexColor: "#475569",
+  },
+  {
+    name: "Gas",
+    hexColor: "#DC2626",
+  },
+  {
+    name: "Utilities",
+    hexColor: "#0891B2",
+  },
+  {
+    name: "Groceries",
+    hexColor: "#D97706",
+  },
+  {
+    name: "Phone Bill",
+    hexColor: "#4F46E5",
+  }
+]
 
 @Injectable()
 export class UserPreferencesService {
@@ -33,10 +43,9 @@ export class UserPreferencesService {
     return await newUserPreference.save();
   }
 
-  async deleteCategory(user: UserJWTPayload, categoryId: string) {
-
+  async deleteCategory(user: UserJWTPayload, categoryName: string) {
     const category = await this.userPreferencesModel.findOne(
-      { userId: user.id, 'categories._id': categoryId }, // Find by userId and the category._id
+      { userId: user.id, 'categories.name': categoryName }, // Find by userId and the category._id
       { 'categories.$': 1 } // Project only the matched category
     );
 
@@ -44,7 +53,7 @@ export class UserPreferencesService {
 
     await this.userPreferencesModel.updateOne(
       { userId: user.id },
-      { $pull: { categories: { _id: categoryId } } }
+      { $pull: { categories: { name: categoryName } } }
     ).exec();
 
     const categories = await this.getUserCategories(user);
@@ -83,7 +92,7 @@ export class UserPreferencesService {
     }
 
     if (!preferences) return new HttpException("User preferences - categories: not found", HttpStatus.NOT_FOUND);
-    
+
     return preferences.categories;
   }
 
