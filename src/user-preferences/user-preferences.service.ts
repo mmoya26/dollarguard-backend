@@ -5,6 +5,7 @@ import { UserPreferences } from './schemas/user-preferences.schema';
 import { Model, Types } from 'mongoose';
 import { Category } from '@interfaces/category';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
+import { NewBudgetDto } from './dto/user-preferences-budgets';
 
 export const defaultCategories: Category[] = [
   {
@@ -37,7 +38,8 @@ export class UserPreferencesService {
 
     const newUserPreference = await this.userPreferencesModel.create({
       userId,
-      categories: defaultCategories
+      categories: defaultCategories,
+      budgets: null
     });
 
     return await newUserPreference.save();
@@ -109,8 +111,30 @@ export class UserPreferencesService {
       }
     }).lean();
 
-    if (!preferences) return new HttpException("User preferences - categories: not found", HttpStatus.NOT_FOUND);
+    if (!preferences) return new HttpException("User preferenecs - categories: not found", HttpStatus.NOT_FOUND);
 
     return preferences.categories
+  }
+
+  async setOrUpdateUserBudget(user: UserJWTPayload, newBudgetDto: NewBudgetDto) {
+    const userPreferences = await this.userPreferencesModel.findOne({ userId: user.id });  
+
+    if (userPreferences.budgets === null) {
+      userPreferences.budgets = new Map();
+    } else {
+      userPreferences.budgets = new Map(Object.entries(userPreferences.budgets));
+    }
+
+    if(!userPreferences.budgets.has(newBudgetDto.year)) {
+      userPreferences.budgets.set(newBudgetDto.year, new Map());
+    }
+
+    const yearBudget = userPreferences.budgets.get(newBudgetDto.year);
+
+    yearBudget.set(newBudgetDto.month, newBudgetDto.amount);
+
+    userPreferences.budgets = Object.fromEntries([...userPreferences.budgets.entries()].map(([year, monthsMap]) => [year, Object.fromEntries([...monthsMap.entries()])])) as any;
+
+    await userPreferences.save();
   }
 }
