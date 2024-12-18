@@ -4,7 +4,7 @@ import { Model, Types } from 'mongoose';
 import { ExpenseDto } from './dto/expense.dto';
 import { Expense } from "./schemas/expense.schema";
 import { ExpenseParams } from '../interfaces/expenseParams';
-import { isValidDate } from './helpers/dateFunctions';
+import { isValidDate } from '@helpers/dateFunctions';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
 
 @Injectable()

@@ -3,7 +3,7 @@ import { ExpensesService } from './expenses.service';
 import { ExpenseDto } from './dto/expense.dto';
 import { ExpenseParams } from '../interfaces/expenseParams';
 import mongoose from 'mongoose';
-import { isValidDate, isValidMonth } from './helpers/dateFunctions';
+import { isValidDate, isValidMonth } from '@helpers/dateFunctions';
 import { User } from 'src/decorators/user.decorator';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';

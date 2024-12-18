@@ -6,7 +6,6 @@
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
 # Things to do
-- Do validations for user-preferences, specially for budgets
 - Research cookie warning message (Cookie will soon be rejected because it is foreign and does not have the “Partitioned“ attribute.)
 - Look into moving validations of params to their on validator constraint
 - Use NestJS HttpExceptions enums instead of using hard coded status codes

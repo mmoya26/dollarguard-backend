@@ -117,7 +117,7 @@ export class UserPreferencesService {
   }
 
   async setOrUpdateUserBudget(user: UserJWTPayload, newBudgetDto: NewBudgetDto) {
-    const userPreferences = await this.userPreferencesModel.findOne({ userId: user.id });  
+    const userPreferences = await this.userPreferencesModel.findOne({ userId: user.id });
 
     if (userPreferences.budgets === null) {
       userPreferences.budgets = new Map();
@@ -136,5 +136,25 @@ export class UserPreferencesService {
     userPreferences.budgets = Object.fromEntries([...userPreferences.budgets.entries()].map(([year, monthsMap]) => [year, Object.fromEntries([...monthsMap.entries()])])) as any;
 
     await userPreferences.save();
+  }
+
+  async getUserBudget(user: UserJWTPayload, year: string, month: string): Promise<number | null> {
+    const userPreferences = await this.userPreferencesModel.findOne({ userId: user.id });
+
+    // if the user has no budget set at all return null
+    if (userPreferences.budgets === null) return null;
+
+    userPreferences.budgets = new Map(Object.entries(userPreferences.budgets));
+
+    // if the user has no budget set for that year return null
+    if (!userPreferences.budgets.has(year)) return null;
+    
+    const yearBudget = userPreferences.budgets.get(year);
+
+    // if the user has no budget for that month return null
+    if (!yearBudget.has(month)) return null;
+    
+    // if everything else passes return the budget for that month
+    return yearBudget.get(month);
   }
 }

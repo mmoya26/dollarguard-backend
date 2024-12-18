@@ -5,6 +5,7 @@ import { User } from 'src/decorators/user.decorator';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
 import { AddCategoryDto } from './dto/user-preferences-categories-dto';
 import { NewBudgetDto } from './dto/user-preferences-budgets';
+import { isValidMonth } from '@helpers/dateFunctions';
 
 @Controller('user-preferences')
 @UseGuards(JwtAuthGuard)
@@ -30,6 +31,14 @@ export class UserPreferencesController {
 
   @Patch('budgets')
   async setOrUpdateUserDto(@User() user: UserJWTPayload, @Body() newBudget: NewBudgetDto) {
-    return await this.userPreferencesService.setOrUpdateUserBudget(user, newBudget);
+    if (!isValidMonth(newBudget.month)) throw new HttpException('Month is not valid', HttpStatus.BAD_REQUEST);
+    await this.userPreferencesService.setOrUpdateUserBudget(user, newBudget);
+    return "Budget updated/set successfully"
+  }
+
+  @Get('budgets/:year/:month')
+  async gerUserBudgets(@User() user: UserJWTPayload, @Param('year') year: string, @Param('month') month: string) {
+    if (!isValidMonth(month)) throw new HttpException('Month is not valid', HttpStatus.BAD_REQUEST);
+    return this.userPreferencesService.getUserBudget(user, year, month);
   }
 }
