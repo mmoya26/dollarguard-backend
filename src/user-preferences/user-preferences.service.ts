@@ -119,7 +119,11 @@ export class UserPreferencesService {
   async setOrUpdateUserBudget(user: UserJWTPayload, newBudgetDto: NewBudgetDto) {
     const userPreferences = await this.userPreferencesModel.findOne({ userId: user.id });
 
-    if (userPreferences.budgets === null) {
+    /* 
+      if userPreferences.budgets is null it means they have the property but it is empty (null) 
+      if userPreferences.budgets is undefined it means that the property does not exist on the document
+    */
+    if (userPreferences.budgets === null || userPreferences['budgets'] === undefined) {
       userPreferences.budgets = new Map();
     } else {
       userPreferences.budgets = new Map(Object.entries(userPreferences.budgets));
@@ -141,8 +145,11 @@ export class UserPreferencesService {
   async getUserBudget(user: UserJWTPayload, year: string, month: string): Promise<number | null> {
     const userPreferences = await this.userPreferencesModel.findOne({ userId: user.id });
 
-    // if the user has no budget set at all return null
-    if (userPreferences.budgets === null) return null;
+    /* 
+      if userPreferences.budgets is null it means they have the property but it is empty (null) 
+      if userPreferences.budgets is undefined it means that the property does not exist on the document
+    */
+    if (userPreferences.budgets === null || userPreferences['budgets'] === undefined) return null;
 
     userPreferences.budgets = new Map(Object.entries(userPreferences.budgets));
 
