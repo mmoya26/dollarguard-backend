@@ -135,7 +135,7 @@ export class UserPreferencesService {
 
     const yearBudget = userPreferences.budgets.get(newBudgetDto.year);
 
-    yearBudget.set(newBudgetDto.month, newBudgetDto.amount);
+    yearBudget.set(newBudgetDto.month, newBudgetDto.newAmount);
 
     userPreferences.budgets = Object.fromEntries([...userPreferences.budgets.entries()].map(([year, monthsMap]) => [year, Object.fromEntries([...monthsMap.entries()])])) as any;
 

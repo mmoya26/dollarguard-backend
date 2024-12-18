@@ -11,5 +11,5 @@ export class NewBudgetDto {
 
     @IsNumber()
     @IsNotEmpty()
-    amount: number
+    newAmount: number
 }

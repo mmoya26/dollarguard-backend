@@ -33,7 +33,7 @@ export class UserPreferencesController {
   async setOrUpdateUserDto(@User() user: UserJWTPayload, @Body() newBudget: NewBudgetDto) {
     if (!isValidMonth(newBudget.month)) throw new HttpException('Month is not valid', HttpStatus.BAD_REQUEST);
     await this.userPreferencesService.setOrUpdateUserBudget(user, newBudget);
-    return "Budget updated/set successfully"
+    return { message: "Budget updated/set successfully" }
   }
 
   @Get('budgets/:year/:month')
