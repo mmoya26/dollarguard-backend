@@ -10,7 +10,7 @@ export type UserPreferencesDocument = HydratedDocument<UserPreferences>;
             // Transform main document _id
             ret.id = ret._id.toString();
             delete ret._id;
-            
+
             // Transform _id in each category
             if (ret.categories && Array.isArray(ret.categories)) {
                 ret.categories = ret.categories.map(category => {
@@ -22,18 +22,21 @@ export type UserPreferencesDocument = HydratedDocument<UserPreferences>;
                     return transformed;
                 });
             }
-            
+
             return ret;
         },
     },
     versionKey: false
 })
 export class UserPreferences {
-    @Prop({unique: true, required: true})
+    @Prop({ unique: true, required: true })
     userId: string
 
     @Prop({ type: [{ name: String, hexColor: String }], required: true })
     categories: Category[]
+
+    @Prop({ type: Map, of: { type: Map, of: Number } })
+    budgets?: Map<string, Map<string, number>>;
 }
 
 export const UserPreferencesSchema = SchemaFactory.createForClass(UserPreferences);
