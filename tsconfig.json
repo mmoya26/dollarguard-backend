@@ -18,8 +18,15 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-        "@interfaces/*": [ "src/interfaces/*" ],
-        "@helpers/*": [ "src/helpers/*" ]
+      "@/*": [
+        "src/*"
+      ],
+      "@interfaces/*": [
+        "src/interfaces/*"
+      ],
+      "@helpers/*": [
+        "src/helpers/*"
+      ]
     }
   }
 }
