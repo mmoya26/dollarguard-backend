@@ -7,28 +7,7 @@ import { Category } from '@interfaces/category';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
 import { NewBudgetDto } from './dto/user-preferences-budgets';
 
-export const defaultCategories: Category[] = [
-  {
-    name: "Miscellaneous",
-    hexColor: "#475569",
-  },
-  {
-    name: "Gas",
-    hexColor: "#DC2626",
-  },
-  {
-    name: "Utilities",
-    hexColor: "#0891B2",
-  },
-  {
-    name: "Groceries",
-    hexColor: "#D97706",
-  },
-  {
-    name: "Phone Bill",
-    hexColor: "#4F46E5",
-  }
-]
+
 
 @Injectable()
 export class UserPreferencesService {
@@ -37,9 +16,7 @@ export class UserPreferencesService {
   async createDefaultUserPreferences(userId: string) {
 
     const newUserPreference = await this.userPreferencesModel.create({
-      userId,
-      categories: defaultCategories,
-      budgets: null
+      userId
     });
 
     return await newUserPreference.save();
