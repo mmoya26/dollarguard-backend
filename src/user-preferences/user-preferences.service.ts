@@ -6,6 +6,7 @@ import { Model, Types } from 'mongoose';
 import { Category } from '@interfaces/category';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
 import { NewBudgetDto } from './dto/user-preferences-budgets';
+import { UserPreferencesActiveYearsDto } from './dto/user-preferences-active-years.dto';
 
 
 
@@ -106,7 +107,7 @@ export class UserPreferencesService {
       userPreferences.budgets = new Map(Object.entries(userPreferences.budgets));
     }
 
-    if(!userPreferences.budgets.has(newBudgetDto.year)) {
+    if (!userPreferences.budgets.has(newBudgetDto.year)) {
       userPreferences.budgets.set(newBudgetDto.year, new Map());
     }
 
@@ -122,6 +123,8 @@ export class UserPreferencesService {
   async getUserBudget(user: UserJWTPayload, year: string, month: string): Promise<number | null> {
     const userPreferences = await this.userPreferencesModel.findOne({ userId: user.id });
 
+    if (!userPreferences) throw new HttpException("User preferences not found", HttpStatus.NOT_FOUND);
+
     /* 
       if userPreferences.budgets is null it means they have the property but it is empty (null) 
       if userPreferences.budgets is undefined it means that the property does not exist on the document
@@ -132,13 +135,37 @@ export class UserPreferencesService {
 
     // if the user has no budget set for that year return null
     if (!userPreferences.budgets.has(year)) return null;
-    
+
     const yearBudget = userPreferences.budgets.get(year);
 
     // if the user has no budget for that month return null
     if (!yearBudget.has(month)) return null;
-    
+
     // if everything else passes return the budget for that month
     return yearBudget.get(month);
+  }
+
+  async getUserActiveYears(user: UserJWTPayload): Promise<string[]> {
+    const userPreferences = await this.userPreferencesModel.findOne({ userId: user.id });
+
+    if (!userPreferences) throw new HttpException("User preferences not found", HttpStatus.NOT_FOUND);
+
+    /* 
+      if the user does not have the active years property present in their collection 
+      it stil returns an empty array because of the default value in the schema
+    */
+    return userPreferences.activeYears;
+  }
+
+  async updateUserActiveYears(user: UserJWTPayload, { year }: UserPreferencesActiveYearsDto) {
+    const userPreferences = await this.userPreferencesModel.findOne({ userId: user.id });
+
+    if (!userPreferences) throw new HttpException("User preferences not found", HttpStatus.NOT_FOUND);
+
+    if (userPreferences.activeYears.includes(year)) return;
+
+    userPreferences.activeYears.push(year);
+
+    return await userPreferences.save();
   }
 }
