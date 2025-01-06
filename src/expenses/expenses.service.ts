@@ -57,19 +57,4 @@ export class ExpensesService {
   async deleteExpense(id: string, user: UserJWTPayload) {
     return this.expenseModel.findOneAndDelete({userId: user.id, _id: new Types.ObjectId(id)})
   }
-
-
-  async getYears(user: UserJWTPayload): Promise<String[]> {
-    const years = await this.expenseModel.aggregate([
-      { $match: { userId: user.id } },
-      { $group: {
-          _id: { $year: "$date" }
-        }
-      },
-      { $sort: { _id: -1 } },
-      { $project: { _id: 0, year: { $toString: "$_id" } } }
-    ]);
-
-    return years.map(y => y.year);
-  }
 }

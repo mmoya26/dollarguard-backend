@@ -13,11 +13,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 export class ExpensesController {
   constructor(private readonly expensesService: ExpensesService) {}
 
-  @Get()
-  async getUserYears(@User() user: UserJWTPayload) {
-    return await this.expensesService.getYears(user)
-  }
-
   @Get(':year/:month')
   async getExpensesByYearAndMonth(@Param() params: ExpenseParams, @User() user) {
     if (!isValidMonth(params.month)) throw new HttpException('Unable to get expenses', HttpStatus.BAD_REQUEST);
