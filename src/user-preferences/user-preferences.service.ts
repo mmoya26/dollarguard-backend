@@ -162,7 +162,7 @@ export class UserPreferencesService {
 
     if (!userPreferences) throw new HttpException("User preferences not found", HttpStatus.NOT_FOUND);
 
-    if (userPreferences.activeYears.includes(year)) return;
+    if (userPreferences.activeYears.includes(year)) throw new HttpException("Active year already exists", HttpStatus.CONFLICT);
 
     userPreferences.activeYears.push(year);
 
