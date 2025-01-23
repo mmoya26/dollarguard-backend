@@ -1,10 +1,9 @@
-import { IsNotEmpty, IsString, Length, Matches } from "class-validator";
+import { IsNotEmpty, IsNumber, IsNumberString, Matches, Max, Min } from "class-validator";
 
 export class UserPreferencesActiveYearsDto {
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
-    @Matches(/^[0-9]{4}$/, { 
-        message: 'Year must be exactly 4 digits with no whitespace or special characters' 
-    })
-    year: string;
+    @Min(1000)  // 4-digit minimum
+    @Max(9999)  // 4-digit maximum
+    year: number;
 }

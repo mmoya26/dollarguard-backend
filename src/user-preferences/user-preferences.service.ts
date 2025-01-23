@@ -145,7 +145,7 @@ export class UserPreferencesService {
     return yearBudget.get(month);
   }
 
-  async getUserActiveYears(user: UserJWTPayload): Promise<string[]> {
+  async getUserActiveYears(user: UserJWTPayload): Promise<number[]> {
     const userPreferences = await this.userPreferencesModel.findOne({ userId: user.id });
 
     if (!userPreferences) throw new HttpException("User preferences not found", HttpStatus.NOT_FOUND);

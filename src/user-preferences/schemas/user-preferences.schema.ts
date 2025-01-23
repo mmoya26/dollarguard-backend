@@ -61,8 +61,8 @@ export class UserPreferences {
     @Prop({ type: Map, of: { type: Map, of: Number }, default: null})
     budgets: Map<string, Map<string, number>>;
 
-    @Prop({type: [String], default: []})
-    activeYears: string[];
+    @Prop({type: [Number], default: []})
+    activeYears: number[];
 }
 
 export const UserPreferencesSchema = SchemaFactory.createForClass(UserPreferences);
