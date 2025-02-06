@@ -26,6 +26,9 @@
       ],
       "@helpers/*": [
         "src/helpers/*"
+      ],
+      "@validators/*": [
+        "src/validators/*"
       ]
     }
   }
