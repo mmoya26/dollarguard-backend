@@ -7,12 +7,11 @@ import { Category } from '@interfaces/category';
 import { UserJWTPayload } from '@interfaces/UserJWTPayload';
 import { NewBudgetDto } from './dto/user-preferences-budgets';
 import { UserPreferencesActiveYearsDto } from './dto/user-preferences-active-years.dto';
-
-
+import { ExpensesService } from '@/expenses/expenses.service';
 
 @Injectable()
 export class UserPreferencesService {
-  constructor(@InjectModel(UserPreferences.name) private readonly userPreferencesModel: Model<UserPreferences>) { }
+  constructor(@InjectModel(UserPreferences.name) private readonly userPreferencesModel: Model<UserPreferences>, private readonly expensesService: ExpensesService) { }
 
   async createDefaultUserPreferences(userId: string) {
 
@@ -155,5 +154,32 @@ export class UserPreferencesService {
     userPreferences.activeYears.push(year);
 
     return await userPreferences.save();
+  }
+
+
+  async deleteUserActiveYear(user: UserJWTPayload, { year }: UserPreferencesActiveYearsDto) {
+    const userPreferences = await this.userPreferencesModel.findOne({ userId: user.id });
+
+    if (!userPreferences) throw new HttpException("User preferences not found", HttpStatus.NOT_FOUND);
+
+    if (!userPreferences.activeYears.includes(year)) return null;
+
+    userPreferences.activeYears = userPreferences.activeYears.filter(activeYear => activeYear !== year);
+
+    const expensesWithSameActiveYear = await this.expensesService.getExpensesByYear(year, user);
+
+    // if they don't have any expenses for that year return the updated user preferences
+    if (expensesWithSameActiveYear.length === 0) {
+      const { activeYears } = await userPreferences.save();
+      return activeYears;
+    }
+
+    for (const expense of expensesWithSameActiveYear) {
+      // console.log(`Deleting expense for date: ${expense.date} with ID: ${expense.id as string}`);
+      await this.expensesService.deleteExpense(expense.id, user);
+    }
+
+    const { activeYears } = await userPreferences.save();
+    return activeYears;
   }
 }

@@ -49,7 +49,13 @@ export class UserPreferencesController {
   }
 
   @Patch('active-years')
-  async updateUserActiveYears(@User() user: UserJWTPayload, @Body() year: UserPreferencesActiveYearsDto) {
-    return this.userPreferencesService.updateUserActiveYears(user, year);
+  async updateUserActiveYears(@User() user: UserJWTPayload, @Body() body: UserPreferencesActiveYearsDto) {
+    return this.userPreferencesService.updateUserActiveYears(user, body);
+  }
+
+  @Delete('active-years')
+  async deleteUserActiveYear(@User() user: UserJWTPayload, @Body() body: UserPreferencesActiveYearsDto) {
+    const newActiveYears = await this.userPreferencesService.deleteUserActiveYear(user, body);
+    return newActiveYears;
   }
 }

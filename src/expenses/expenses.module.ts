@@ -8,5 +8,6 @@ import { Expense, ExpenseSchema } from './schemas/expense.schema';
   imports: [MongooseModule.forFeature([{ name: Expense.name, schema: ExpenseSchema }])],
   controllers: [ExpensesController],
   providers: [ExpensesService],
+  exports: [ExpensesService]
 })
 export class ExpenseModule {}
